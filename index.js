@@ -33,6 +33,7 @@ function verifyJWT(req, res, next) {
 async function run() {
     try {
         const userCollection = client.db('HeroRider').collection('users')
+        const courseCollection = client.db('HeroRider').collection('Courses')
 
 
 
@@ -59,13 +60,27 @@ async function run() {
             })
         })
 
-        // Gell All Courses
-        app.get('/users', async (req, res) => {
-            const result = await userCollection.find().toArray()
+
+        // get single user
+        app.get('/singleuser/:email', async (req, res) => {
+            const email = req.params.email
+            console.log(email) 
+            const query = {
+                email: email 
+            }
+            const result = await userCollection.findOne(query)
             res.send(result)
         })
 
-       
+
+        // all course
+        app.get('/courses', async (req, res) => {
+            const result = await courseCollection.find().toArray()
+            res.send(result)
+        })
+
+        // Gell All Courses
+
         app.get('/alluser', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
@@ -101,4 +116,13 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Hero Rider server is Running on port ${port}`)
 })
+
+
+// echo "# hero-rider-server" >> README.md
+// git init
+// git add README.md
+// git commit -m "first commit"
+// git branch -M main
+// git remote add origin https://github.com/jayed-phero/hero-rider-server.git
+// git push -u origin main
 
