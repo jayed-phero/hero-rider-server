@@ -120,17 +120,6 @@ async function run() {
         });
         
 
-        // app.put('/api/update', async (req, res) => {
-        //     try {
-        //       const { ids, action } = req.body;
-        //       await MyModel.updateMany({ _id: { $in: ids } }, { action });
-        //       res.json({ success: true });
-        //     } catch (error) {
-        //       console.error(error);
-        //       res.status(500).json({ success: false, message: 'Server error' });
-        //     }
-        //   });
-
         // course by paid 
         app.get('/paidstudent/:email', async (req, res) => {
             const email = req.params.email
