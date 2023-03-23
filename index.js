@@ -87,17 +87,49 @@ async function run() {
             const result = await courseCollection.findOne(query)
             res.send(result)
         })
-        // Gell All Courses
 
+
+        // get al user 
         app.get('/alluser', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
-            const query = {}
-            const cursor = userCollection.find(query)
+            const search = req.query.search;
+            const from = req.query.from ? parseInt(req.query.from) : null;
+            const till = req.query.till ? parseInt(req.query.till) : null;
+            let query = {};
+        
+            if (search && search.length) {
+                query = {
+                    $text: {
+                        $search: search
+                    }
+                }
+            }
+        
+            if (from && till) {
+                query.age = {
+                    $gte: from,
+                    $lte: till
+                }
+            }
+        
+            const cursor = userCollection.find(query);
             const userData = await cursor.skip(page * size).limit(size).toArray();
-            const count = await userCollection.estimatedDocumentCount();
-            res.send({ count, userData })
-        })
+            const count = await userCollection.countDocuments(query);
+            res.send({ count, userData });
+        });
+        
+
+        // app.put('/api/update', async (req, res) => {
+        //     try {
+        //       const { ids, action } = req.body;
+        //       await MyModel.updateMany({ _id: { $in: ids } }, { action });
+        //       res.json({ success: true });
+        //     } catch (error) {
+        //       console.error(error);
+        //       res.status(500).json({ success: false, message: 'Server error' });
+        //     }
+        //   });
 
         // course by paid 
         app.get('/paidstudent/:email', async (req, res) => {
@@ -152,6 +184,18 @@ async function run() {
         app.get('/paymentsinfo', async (req, res) => {
             const result = await paymentsCollection.find().toArray()
             res.send(result)
+        })
+
+        // Get search result
+        app.get('/search-result', async (req, res) => {
+            const query = {}
+            const location = req.query.location
+            if (location) query.location = location
+
+            console.log(query)
+            const cursor = homesCollection.find(query)
+            const homes = await cursor.toArray()
+            res.send(homes)
         })
 
 
