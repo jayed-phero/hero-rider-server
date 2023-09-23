@@ -4,7 +4,7 @@
         "masyalaId": "CegG0W5X29A",
         "lecturer": "শায়খ আহমাদুল্লাহ",
         "postedDate": "1 Mar 2017",
-        "videoLength": "12:53",
+        "videoDuration": "12:53",
         "lecturerId": "ahmadullah"
     },
     {
@@ -12,7 +12,7 @@
         "masyalaId": "T5p9EeG9wBY",
         "lecturer": "শায়খ আহমাদুল্লাহ",
         "postedDate": "26 Nov 2019",
-        "videoLength": "01:27",
+        "videoDuration": "01:27",
         "lecturerId": "ahmadullah"
     },
     {
@@ -20,7 +20,7 @@
         "masyalaId": "CegG0W5X29A",
         "lecturer": "শায়খ আহমাদুল্লাহ",
         "postedDate": "24 Nov 2019",
-        "videoLength": "3:55",
+        "videoDuration": "3:55",
         "lecturerId": "ahmadullah"
     },
     {
@@ -28,7 +28,7 @@
         "masyalaId": "mM6W0hpYWdY",
         "lecturer": "প্রফেসর মোখতার আহমাদ",
         "postedDate": "6 Jul 2021",
-        "videoLength": "3:34",
+        "videoDuration": "3:34",
         "lecturerId": "mkhtarahmed"
     },
     {
@@ -36,7 +36,7 @@
         "masyalaId": "eG4AwrXzcGI",
         "lecturer": "প্রফেসর মোখতার আহমাদ",
         "postedDate": "26 Jan 2022",
-        "videoLength": "1:15:10",
+        "videoDuration": "1:15:10",
         "lecturerId": "mkhtarahmed"
     },
     {
@@ -44,7 +44,7 @@
         "masyalaId": "9_7XejSY9rc",
         "lecturer": "প্রফেসর মোখতার আহমাদ",
         "postedDate": "8 Feb 2023",
-        "videoLength": "1:10:54",
+        "videoDuration": "1:10:54",
         "lecturerId": "mkhtarahmed"
     }
 ]

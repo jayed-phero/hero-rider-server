@@ -31,7 +31,10 @@ async function run() {
                 return res.status(400).json({ error: 'Lecture with the same title already exists' });
             } else {
                 const result = await poscastCollection.insertOne(lectureInfo);
-                return res.status(201).json(result.ops[0]);
+                return res.json({
+                    result: result,
+                    status: "success"
+                });
             }
         });
 
@@ -62,7 +65,7 @@ async function run() {
             const lecturerId = req.params.lecturerId;
 
             try {
-                const lectures = await poscastCollection.find({ lecturerId }).toArray();
+                const lectures = await poscastCollection.find({ lecturerId }).sort({ _id: -1 }).toArray();
                 res.json(lectures);
             } catch (error) {
                 console.error(error);
@@ -73,20 +76,26 @@ async function run() {
         app.post("/masyalas", async (req, res) => {
             const masyalaInfo = req.body;
 
-            const existingMasyala = await masyalaCollection.findOne({ title: masyalaInfo.masyalaId });
+            const existingMasyala = await masyalaCollection.findOne({ masyalaId: masyalaInfo.masyalaId });
 
             if (existingMasyala) {
                 return res.status(400).json({ error: 'Lecture with the same title already exists' });
             } else {
-                const result = await masyalaCollection.insertOne(lectureInfo);
-                return res.status(201).json(result.ops[0]);
+                const result = await masyalaCollection.insertOne(masyalaInfo);
+                return res.json({
+                    result,
+                    status: "success"
+                });
             }
         });
 
         app.get("/masyalas", async (req, res) => {
             try {
-                const masyalas = await masyalaCollection.find().toArray();
-                res.json(masyalas);
+                const masyalas = await masyalaCollection.find().sort({ _id: -1 }).toArray();
+                res.json({
+                    masyalas,
+                    status: "success"
+                });
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: 'Internal server error' });
@@ -97,7 +106,7 @@ async function run() {
             const lecturerId = req.params.lecturerId;
 
             try {
-                const lectures = await masyalaCollection.find({ lecturerId }).toArray();
+                const lectures = await masyalaCollection.find({ lecturerId }).sort({ _id: -1 }).toArray();
                 res.json(lectures);
             } catch (error) {
                 console.error(error);
