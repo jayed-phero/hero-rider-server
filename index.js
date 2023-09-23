@@ -14,178 +14,96 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization
-    if (!authHeader) {
-        return res.status(401).send('unauthorized access')
-    }
-    const token = authHeader.split(' ')[1]
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-        if (err) {
-            return res.status(403).send({ message: 'forbidden access' })
-        }
-        red.decoded = decoded;
-        next()
-    })
-}
-
 
 async function run() {
     try {
-        const userCollection = client.db('HeroRider').collection('users')
-        const courseCollection = client.db('HeroRider').collection('Courses')
-        const paymentsCollection = client.db('HeroRider').collection('PaymentsInfo')
+        const lecturerCollection = client.db('QuranicLife').collection('islamicPodcast')
+        const poscastCollection = client.db('QuranicLife').collection('lectures')
+        const masyalaCollection = client.db('QuranicLife').collection('masyalas')
 
 
+        app.post("/lectures", async (req, res) => {
+            const lectureInfo = req.body;
 
+            const existingLecture = await poscastCollection.findOne({ title: lectureInfo.itemId });
 
-        app.put('/users/:email', async (req, res) => {
-            const email = req.params.email
-            const user = req.body
-            const filter = { email: email }
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: user,
+            if (existingLecture) {
+                return res.status(400).json({ error: 'Lecture with the same title already exists' });
+            } else {
+                const result = await poscastCollection.insertOne(lectureInfo);
+                return res.status(201).json(result.ops[0]);
             }
-
-            const result = await userCollection.updateOne(filter, updateDoc, options)
-
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '7d'
-            })
-            console.log(token)
-            res.send({
-                status: 'success',
-                result,
-                token
-            })
-        })
-
-
-        // get single user
-        app.get('/singleuser/:email', async (req, res) => {
-            const email = req.params.email
-            console.log(email)
-            const query = {
-                email: email
-            }
-            const result = await userCollection.findOne(query)
-            res.send(result)
-        })
-
-
-        // all course
-        app.get('/courses', async (req, res) => {
-            const result = await courseCollection.find().toArray()
-            res.send(result)
-        })
-
-
-        app.get('/enrolling/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { _id: new ObjectId(id) }
-            const result = await courseCollection.findOne(query)
-            res.send(result)
-        })
-
-
-        // get al user 
-        app.get('/alluser', async (req, res) => {
-            const page = parseInt(req.query.page);
-            const size = parseInt(req.query.size);
-            const search = req.query.search;
-            const from = req.query.from ? parseInt(req.query.from) : null;
-            const till = req.query.till ? parseInt(req.query.till) : null;
-            let query = {};
-        
-            if (search && search.length) {
-                query = {
-                    $text: {
-                        $search: search
-                    }
-                }
-            }
-        
-            if (from && till) {
-                query.age = {
-                    $gte: from,
-                    $lte: till
-                }
-            }
-        
-            const cursor = userCollection.find(query);
-            const userData = await cursor.skip(page * size).limit(size).toArray();
-            const count = await userCollection.countDocuments(query);
-            res.send({ count, userData });
         });
-        
 
-        // course by paid 
-        app.get('/paidstudent/:email', async (req, res) => {
-            const email = req.params.email
-            const query = {
-                email: email
+        app.get("/lecturers", async (req, res) => {
+            try {
+                const lecturers = await lecturerCollection.find().toArray();
+                const lecturersWithCounts = [];
+                for (const lecturer of lecturers) {
+                    const lecturerId = lecturer.lecturerId;
+                    const lectureCount = await poscastCollection.countDocuments({ lecturerId });
+
+                    lecturersWithCounts.push({
+                        lecturerId: lecturer.lecturerId,
+                        name: lecturer.name,
+                        image: lecturer.image,
+                        lectureCount: lectureCount,
+                    });
+                }
+                res.json(lecturersWithCounts);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal server error' });
             }
-            const result = await paymentsCollection.find(query).toArray()
-            res.send(result)
-        })
+        });
 
-        // admin
-        app.get('/users/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email }
-            const user = await userCollection.findOne(query);
-            res.send({ isAdmin: user?.role === 'admin' });
-        })
 
-        // payment 
+        app.get("/lectures/:lecturerId", async (req, res) => {
+            const lecturerId = req.params.lecturerId;
 
-        app.post("/create-payment-intent", async (req, res) => {
-            const enrollInfo = req.body;
-            const price = enrollInfo.price
-
-            const amount = price * 100
-            const paymentIntent = await stripe.paymentIntents.create({
-                currency: 'usd',
-                amount: amount,
-                "payment_method_types": [
-                    "card"
-                ]
-            });
-            res.send({
-                clientSecret: paymentIntent.client_secret,
-            });
-        })
-
-        // store payment info 
-        app.post('/payments', async (req, res) => {
-            const payment = req.body
-            const newpaymentInfo = {
-                ...payment,
-                paid: true
+            try {
+                const lectures = await poscastCollection.find({ lecturerId }).toArray();
+                res.json(lectures);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal server error' });
             }
-            const result = await paymentsCollection.insertOne(newpaymentInfo)
-            res.send(result)
-        })
+        });
 
+        app.post("/masyalas", async (req, res) => {
+            const masyalaInfo = req.body;
 
-        // get payments info 
-        app.get('/paymentsinfo', async (req, res) => {
-            const result = await paymentsCollection.find().toArray()
-            res.send(result)
-        })
+            const existingMasyala = await masyalaCollection.findOne({ title: masyalaInfo.masyalaId });
 
-        // Get search result
-        app.get('/search-result', async (req, res) => {
-            const query = {}
-            const location = req.query.location
-            if (location) query.location = location
+            if (existingMasyala) {
+                return res.status(400).json({ error: 'Lecture with the same title already exists' });
+            } else {
+                const result = await masyalaCollection.insertOne(lectureInfo);
+                return res.status(201).json(result.ops[0]);
+            }
+        });
 
-            console.log(query)
-            const cursor = homesCollection.find(query)
-            const homes = await cursor.toArray()
-            res.send(homes)
-        })
+        app.get("/masyalas", async (req, res) => {
+            try {
+                const masyalas = await masyalaCollection.find().toArray();
+                res.json(masyalas);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+
+        app.get("/masyalas/:lecturerId", async (req, res) => {
+            const lecturerId = req.params.lecturerId;
+
+            try {
+                const lectures = await masyalaCollection.find({ lecturerId }).toArray();
+                res.json(lectures);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
 
 
     }
@@ -198,11 +116,11 @@ run().catch(err => console.log(err))
 
 
 app.get('/', (req, res) => {
-    res.send('Hero Rider Site is Running')
+    res.send('Quranic Life Site is Running')
 })
 
 app.listen(port, () => {
-    console.log(`Hero Rider server is Running on port ${port}`)
+    console.log(`Quranic Life server is Running on port ${port}`)
 })
 
 
