@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Dr. Khandaker Abdullah Jahangir Rh",
+        "lecturerId": "1",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmn_LF-_u9Pn7GQ1omaTU7Ed5Msub4nTcHJRD1iMp8Pas7vwlwelAShyZrlGzji5UhFYM&usqp=CAU"
+    },
+    {
+        "name": "Mizanur Rahman Azhari",
+        "lecturerId": "2",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmn_LF-_u9Pn7GQ1omaTU7Ed5Msub4nTcHJRD1iMp8Pas7vwlwelAShyZrlGzji5UhFYM&usqp=CAU"
+    },
+    {
+        "name": "Ahmadullah",
+        "lecturerId": "3",
+        "image": "https://i.ibb.co/XFbDc0Q/download.jpg"
+    }
+]
