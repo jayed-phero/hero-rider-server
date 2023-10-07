@@ -12,6 +12,8 @@ app.use(express.json())
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.msatzvk.mongodb.net/?retryWrites=true&w=majority`;
 
+// console.log(uri)
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
@@ -65,13 +67,15 @@ async function run() {
             const lecturerId = req.params.lecturerId;
 
             try {
-                const lectures = await poscastCollection.find({ lecturerId }).sort({ _id: -1 }).toArray();
+                const lectures = await poscastCollection.find({ lecturerId }).sort({ $natural: -1 }).toArray();
                 res.json(lectures);
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: 'Internal server error' });
             }
         });
+
+
 
         app.post("/masyalas", async (req, res) => {
             const masyalaInfo = req.body;
@@ -91,7 +95,7 @@ async function run() {
 
         app.get("/masyalas", async (req, res) => {
             try {
-                const masyalas = await masyalaCollection.find().sort({ _id: -1 }).toArray();
+                const masyalas = await masyalaCollection.find().sort({ $natural: -1 }).toArray();
                 res.json({
                     masyalas,
                     status: "success"
@@ -106,7 +110,7 @@ async function run() {
             const lecturerId = req.params.lecturerId;
 
             try {
-                const lectures = await masyalaCollection.find({ lecturerId }).sort({ _id: -1 }).toArray();
+                const lectures = await masyalaCollection.find({ lecturerId }).sort({ $natural: -1 }).toArray();
                 res.json(lectures);
             } catch (error) {
                 console.error(error);
