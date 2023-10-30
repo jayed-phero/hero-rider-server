@@ -11,7 +11,7 @@ const masyalaSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (value) => validator.isLength(value, { min: 1, max: 50 }),
+      validator: (value) => validator.isLength(value, { min: 1 }),
       message: "Title should be between 1 and 50 characters",
     },
   },

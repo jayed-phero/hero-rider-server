@@ -1,5 +1,5 @@
 // lecture.controller.js
-const Lecture = require("../models/lecture.model");
+const Lecture = require("../models/Lecture");
 
 const createLecture = async (req, res) => {
   const lectureInfo = req.body;
@@ -26,43 +26,6 @@ const createLecture = async (req, res) => {
   }
 };
 
-const getLecturersWithCounts = async (req, res) => {
-  try {
-    const lecturers = await Lecture.aggregate([
-      {
-        $group: {
-          _id: "$lecturerId",
-          name: { $first: "$lecturer" },
-          image: { $first: "$lecturerImage" },
-          lectureCount: { $sum: 1 },
-        },
-      },
-    ]);
-
-    res.json(lecturers);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-const getLecturesByLecturerId = async (req, res) => {
-  const lecturerId = req.params.lecturerId;
-
-  try {
-    const lectures = await Lecture.find({ lecturerId })
-      .sort({ $natural: -1 })
-      .exec();
-
-    res.json(lectures);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 module.exports = {
   createLecture,
-  getLecturersWithCounts,
-  getLecturesByLecturerId,
 };

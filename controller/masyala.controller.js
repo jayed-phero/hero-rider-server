@@ -1,5 +1,5 @@
 // masyala.controller.js
-const Masyala = require("../models/masyala.model");
+const Masyala = require("../models/Masyala");
 
 const createMasyala = async (req, res) => {
   const masyalaInfo = req.body;
@@ -29,7 +29,7 @@ const createMasyala = async (req, res) => {
 const getMasyalas = async (req, res) => {
   try {
     const masyalas = await Masyala.find().sort({ $natural: -1 }).exec();
-    res.json({
+    res.send({
       masyalas,
       status: "success",
     });

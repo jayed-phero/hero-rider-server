@@ -7,14 +7,14 @@ const User = require("../models/User");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "your-email@gmail.com",
-    pass: "your-email-password",
+    user: "eyetune.islam@gmail.com",
+    pass: `${process.env.MAILER_INFO}`,
   },
 });
 
 const sendVerificationCode = async (email, verificationCode) => {
   const mailOptions = {
-    from: "your-email@gmail.com",
+    from: "eyetune.islam@gmail.com",
     to: email,
     subject: "Account Verification Code",
     text: `Your verification code is: ${verificationCode}`,
@@ -33,7 +33,9 @@ const sendVerificationCode = async (email, verificationCode) => {
 };
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
+
+  console.log(req.body);
 
   try {
     // Check if the user already exists
@@ -48,7 +50,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create a new user
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ email, password: hashedPassword, username });
 
     // Generate and save a validation code with expiration time
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
@@ -60,12 +62,12 @@ const register = async (req, res) => {
       expirationTime,
     });
 
-    const result = await newUser.save();
+    await newUser.save();
 
     // Send verification code via email
-    await sendVerificationCode(email, verificationCode);
+    // await sendVerificationCode(email, verificationCode);
 
-    res.json({ result, msg: "User registered successfully" });
+    res.json({ email, msg: "User registered successfully", status: "success" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

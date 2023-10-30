@@ -1,21 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const validator = require("validator");
-
-const validationCodeSchema = new mongoose.Schema({
-  code: {
-    type: String,
-    required: true,
-  },
-  timestamp: {
-    type: Date,
-    required: true,
-  },
-  expirationTime: {
-    type: Date,
-    required: true,
-  },
-});
+const ValidationCode = require("./ValidationCode");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -30,35 +16,39 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    validate: {
-      validator: (value) => {
-        // Custom password validation with a regular expression
-        const passwordRegex =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(value);
-      },
-      message:
-        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one symbol.",
-    },
+    // validate: {
+    //   validator: (value) => {
+    //     // Custom password validation with a regular expression
+    //     const passwordRegex =
+    //       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    //     return passwordRegex.test(value);
+    //   },
+    //   message:
+    //     "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one symbol.",
+    // },
   },
   username: {
     type: String,
     required: true,
-    validate: {
-      validator: (value) => {
-        // Custom validation for the username (example: alphanumeric and underscores)
-        const usernameRegex = /^[a-zA-Z0-9_]+$/;
-        return usernameRegex.test(value);
-      },
-      message:
-        "Invalid username. Only alphanumeric characters and underscores are allowed.",
-    },
+    // validate: {
+    //   validator: (value) => {
+    //     // Custom validation for the username (example: alphanumeric and underscores)
+    //     const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    //     return usernameRegex.test(value);
+    //   },
+    //   message:
+    //     "Invalid username. Only alphanumeric characters and underscores are allowed.",
+    // },
   },
   isVerified: {
     type: Boolean,
     default: false,
   },
-  validationCodes: [validationCodeSchema],
+  role: {
+    type: String,
+    default: "user"
+  },
+  validationCodes: [ValidationCode.schema], // Embed validationCodeSchema
 });
 
 // Apply the uniqueValidator plugin to the userSchema

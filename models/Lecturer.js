@@ -16,6 +16,6 @@ const lecturerSchema = new mongoose.Schema({
   },
 });
 
-const Lecturer = mongoose.model("Lecturer", lecturerSchema);
+const Lecturer = mongoose.model("Lecturers", lecturerSchema);
 
 module.exports = Lecturer;

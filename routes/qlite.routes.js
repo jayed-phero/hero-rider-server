@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const qlitePostController = require("../controller/qlite.controller");
-const { authenticate } = require("../middlewares/auth");
+const { authMiddleware } = require("../milldeware/jwtverify");
 
 // Like a QlitePost
-router.post("/:postId/like", authenticate, qlitePostController.likeQlitePost);
+router.post("/:postId/reaction",
+  //  authMiddleware,
+  qlitePostController.toggleReaction);
 
 // Comment on a QlitePost
 router.post(
   "/:postId/comment",
-  authenticate,
+  // authMiddleware,
   qlitePostController.commentOnQlitePost
 );
 
@@ -17,7 +19,7 @@ router.post(
 router.get("/:userId/posts", qlitePostController.getUserPosts);
 
 // Create a new QlitePost
-router.post("/create", authenticate, qlitePostController.createQlitePost);
+router.post("/create", qlitePostController.createQlitePost);
 
 // Other QlitePost routes...
 

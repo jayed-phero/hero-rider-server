@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controller/user.controller");
-const authMiddleware = require("../milldeware/jwtverify");
+const { authMiddleware } = require("../milldeware/jwtverify");
 
 // Define routes for users
 router.post("/register", userController.register);
