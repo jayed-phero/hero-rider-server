@@ -54,8 +54,29 @@ const getMasyalasByLecturerId = async (req, res) => {
   }
 };
 
+const getMasyalaById = async (req, res) => {
+  const masyalaId = req.params.masyalaId; // Assuming this is the _id
+
+  try {
+    const masyala = await Masyala.findById(masyalaId).exec();
+
+    if (!masyala) {
+      return res.status(404).json({ error: "Masyala not found" });
+    }
+
+    res.json({
+      masyala,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   createMasyala,
   getMasyalas,
   getMasyalasByLecturerId,
+  getMasyalaById,
 };

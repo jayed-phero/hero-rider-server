@@ -7,5 +7,6 @@ const masyalaController = require("../controller/masyala.controller");
 router.post("/", masyalaController.createMasyala);
 router.get("/", masyalaController.getMasyalas);
 router.get("/:lecturerId", masyalaController.getMasyalasByLecturerId);
+router.get("/item/:masyalaId", masyalaController.getMasyalaById);
 
 module.exports = router;

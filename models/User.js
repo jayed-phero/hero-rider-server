@@ -3,6 +3,12 @@ const uniqueValidator = require("mongoose-unique-validator");
 const validator = require("validator");
 const ValidationCode = require("./ValidationCode");
 
+const user = {
+  email: "musa@gmail.com",
+  username: "musa",
+  password: "1234567890",
+};
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -46,7 +52,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "user"
+    default: "user",
   },
   validationCodes: [ValidationCode.schema], // Embed validationCodeSchema
 });

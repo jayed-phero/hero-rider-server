@@ -11,7 +11,6 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB".red.bold);
 
-
     // mongoose.connection.db.collection("islamicPodcast").aggregate([
     //   { $match: {} },  // Match all documents
     //   { $out: "lecturers" }  // Output to the Lectureres collection
@@ -24,7 +23,6 @@ mongoose
 
     //   mongoose.connection.close();  // Close the connection after copying
     // });
-
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
