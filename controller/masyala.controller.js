@@ -74,6 +74,32 @@ const getMasyalaById = async (req, res) => {
   }
 };
 
+const updateMasyala = async (req, res) => {
+  const masyalaId = req.params.masyalaId;
+  const updatedMasyalaInfo = req.body;
+
+  try {
+    const existingMasyala = await Masyala.findById(masyalaId).exec();
+
+    if (!existingMasyala) {
+      return res.status(404).json({ error: "Masyala not found" });
+    }
+
+    existingMasyala.title = updatedMasyalaInfo.title;
+    existingMasyala.lecturer = updatedMasyalaInfo.lecturer;
+
+    const updatedMasyala = await existingMasyala.save();
+
+    res.json({
+      updatedMasyala,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   createMasyala,
   getMasyalas,

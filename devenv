@@ -1,0 +1,5 @@
+DB_USER=Quranic_Life
+DB_PASSWORD=L5xDtiopGcZt7xco
+DB_CLUSTER=cluster0.msatzvk.mongodb.net
+DB_NAME=QuranicLife
+PORT=5000
