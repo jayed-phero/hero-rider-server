@@ -79,19 +79,19 @@ const updateMasyala = async (req, res) => {
   const updatedMasyalaInfo = req.body;
 
   try {
-    const existingMasyala = await Masyala.findById(masyalaId).exec();
+    const existingMasyala = await Masyala.findOne(masyalaId).exec();
 
     if (!existingMasyala) {
       return res.status(404).json({ error: "Masyala not found" });
     }
-
-    existingMasyala.title = updatedMasyalaInfo.title;
-    existingMasyala.lecturer = updatedMasyalaInfo.lecturer;
-
-    const updatedMasyala = await existingMasyala.save();
+    const updatedData = await Masyala.findByIdAndUpdate(
+      { _id: masyalaId },
+      updatedMasyalaInfo,
+      { new: true }
+    );
 
     res.json({
-      updatedMasyala,
+      updatedData,
       status: "success",
     });
   } catch (error) {
@@ -105,4 +105,5 @@ module.exports = {
   getMasyalas,
   getMasyalasByLecturerId,
   getMasyalaById,
+  updateMasyala,
 };
