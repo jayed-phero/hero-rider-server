@@ -8,6 +8,7 @@ const lecturesRoutes = require("./routes/lectures.routes");
 const masyalasRoutes = require("./routes/masyala.routes");
 const lecturersRoutes = require("./routes/lecturers.routes");
 const qlitePost = require("./routes/qlite.routes");
+const shariyahSolution = require("./routes/sharyesolution.routes");
 
 app.use(express.json());
 app.use(cors());
@@ -23,5 +24,6 @@ app.use("/lectures", lecturesRoutes);
 app.use("/masyalas", masyalasRoutes);
 app.use("/lecturers", lecturersRoutes);
 app.use("/qlite", qlitePost);
+app.use("/sharye", shariyahSolution);
 
 module.exports = app;

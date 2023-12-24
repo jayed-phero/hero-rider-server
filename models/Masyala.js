@@ -30,7 +30,6 @@ const masyalaSchema = new mongoose.Schema({
   lecturerId: {
     type: String,
     required: true,
-    unique: true,
   },
   publishingDate: {
     type: Date,

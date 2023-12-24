@@ -55,8 +55,7 @@ const getMasyalasByLecturerId = async (req, res) => {
 };
 
 const getMasyalaById = async (req, res) => {
-  const masyalaId = req.params.masyalaId; // Assuming this is the _id
-
+  const masyalaId = req.params.masyalaId;
   try {
     const masyala = await Masyala.findById(masyalaId).exec();
 

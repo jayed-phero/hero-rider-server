@@ -15,7 +15,6 @@
 //   getLecturers,
 // };
 
-
 const Lecture = require("../models/Lecture");
 const Lecturer = require("../models/Lecturer");
 
@@ -32,6 +31,7 @@ const getLecturersWithCounts = async (req, res) => {
       });
 
       lecturersWithCounts.push({
+        _id: lecturer._id,
         lecturerId: lecturer.lecturerId,
         name: lecturer.name,
         image: lecturer.image,
@@ -45,8 +45,6 @@ const getLecturersWithCounts = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
 
 const getLecturesByLecturer = async (req, res) => {
   const { lecturerId } = req.params;
@@ -63,9 +61,7 @@ const getLecturesByLecturer = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getLecturersWithCounts,
-  getLecturesByLecturer
+  getLecturesByLecturer,
 };
-
