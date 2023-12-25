@@ -9,6 +9,7 @@ const masyalasRoutes = require("./routes/masyala.routes");
 const lecturersRoutes = require("./routes/lecturers.routes");
 const qlitePost = require("./routes/qlite.routes");
 const shariyahSolution = require("./routes/sharyesolution.routes");
+const islamicLecture = require("./routes/islamiclecture.routes");
 
 app.use(express.json());
 app.use(cors());
@@ -25,5 +26,6 @@ app.use("/masyalas", masyalasRoutes);
 app.use("/lecturers", lecturersRoutes);
 app.use("/qlite", qlitePost);
 app.use("/sharye", shariyahSolution);
+app.use("/api/v1/lecture", islamicLecture);
 
 module.exports = app;

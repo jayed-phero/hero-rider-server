@@ -14,6 +14,12 @@ const lecturerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  lectures: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "IslamicLecture",
+    },
+  ],
 });
 
 const Lecturer = mongoose.model("Lecturers", lecturerSchema);
