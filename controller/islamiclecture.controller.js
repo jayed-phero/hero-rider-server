@@ -75,7 +75,70 @@ const getIslamicLecturesByType = async (req, res) => {
   }
 };
 
+const getIslamicLectureById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const islamicLecture = await IslamicLecture.findById(id);
+
+    if (!islamicLecture) {
+      return res.status(404).json({ error: "Islamic Lecture not found" });
+    }
+
+    return res.json({
+      data: islamicLecture,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const updateIslamicLecture = async (req, res) => {
+  const { id } = req.params;
+  const updatedIslamicLectureInfo = req.body;
+
+  try {
+    const existingIslamicLecture = await IslamicLecture.findById(id);
+
+    if (!existingIslamicLecture) {
+      return res.status(404).json({ error: "Islamic Lecture not found" });
+    }
+
+    // Check if the videoId is being changed to one that already exists
+    if (
+      updatedIslamicLectureInfo.videoId &&
+      updatedIslamicLectureInfo.videoId !== existingIslamicLecture.videoId
+    ) {
+      const duplicateVideoId = await IslamicLecture.findOne({
+        videoId: updatedIslamicLectureInfo.videoId,
+      });
+
+      if (duplicateVideoId) {
+        return res.status(400).json({
+          error: "Islamic Lecture with the same videoId already exists",
+        });
+      }
+    }
+
+    // Update existingIslamicLecture with the new information
+    Object.assign(existingIslamicLecture, updatedIslamicLectureInfo);
+    await existingIslamicLecture.save();
+
+    return res.json({
+      id: existingIslamicLecture._id,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   createIslamicLecture,
   getIslamicLecturesByType,
+  getIslamicLectureById,
+  updateIslamicLecture,
 };
