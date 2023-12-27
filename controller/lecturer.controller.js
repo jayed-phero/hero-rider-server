@@ -61,7 +61,27 @@ const getLecturesByLecturer = async (req, res) => {
   }
 };
 
+const getLecturersInfo = async (req, res) => {
+  try {
+    const lecturers = await Lecturer.find().exec();
+    const lecturersInfo = [];
+
+    for (const lecturer of lecturers) {
+      lecturersInfo.push({
+        value: lecturer._id,
+        label: lecturer.name,
+      });
+    }
+
+    res.json(lecturersInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getLecturersWithCounts,
   getLecturesByLecturer,
+  getLecturersInfo,
 };

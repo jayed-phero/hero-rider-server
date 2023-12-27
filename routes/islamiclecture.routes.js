@@ -6,7 +6,7 @@ const islamicLectureController = require("../controller/islamiclecture.controlle
 // Define routes for masyalas
 
 router.get("/getone/:id", islamicLectureController.getIslamicLectureById);
-router.post("/", islamicLectureController.createIslamicLecture);
+router.post("/create", islamicLectureController.createIslamicLecture);
 
 router.patch("/update/:id", islamicLectureController.updateIslamicLecture);
 

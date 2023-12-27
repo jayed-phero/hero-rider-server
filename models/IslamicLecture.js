@@ -40,11 +40,6 @@ const islamicLecture = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    episode: {
-      type: String,
-      unique: true,
-      trim: true,
-    },
   },
   {
     timestamps: true,

@@ -49,21 +49,28 @@ const getIslamicLecturesByType = async (req, res) => {
   try {
     let lectures;
 
-    if (type === "jummaLiveSharyeSolution") {
-      lectures = await IslamicLecture.find({ type })
-        .sort({ episode: -1 })
-        .populate({
-          path: "lecturer",
-          select: "_id name lecturerId image",
-        });
-    } else {
-      lectures = await IslamicLecture.find({ type })
-        .sort({ createdAt: 1 })
-        .populate({
-          path: "lecturer",
-          select: "_id name lecturerId image",
-        });
-    }
+    lectures = await IslamicLecture.find({ type })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "lecturer",
+        select: "_id name lecturerId image",
+      });
+
+    // if (type === "jummaLiveSharyeSolution") {
+    //   lectures = await IslamicLecture.find({ type })
+    //     .sort({ episode: -1 })
+    //     .populate({
+    //       path: "lecturer",
+    //       select: "_id name lecturerId image",
+    //     });
+    // } else {
+    //   lectures = await IslamicLecture.find({ type })
+    //     .sort({ createdAt: 1 })
+    //     .populate({
+    //       path: "lecturer",
+    //       select: "_id name lecturerId image",
+    //     });
+    // }
 
     return res.json({
       data: lectures,
