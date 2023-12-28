@@ -113,7 +113,6 @@ const updateIslamicLecture = async (req, res) => {
       return res.status(404).json({ error: "Islamic Lecture not found" });
     }
 
-    // Check if the videoId is being changed to one that already exists
     if (
       updatedIslamicLectureInfo.videoId &&
       updatedIslamicLectureInfo.videoId !== existingIslamicLecture.videoId
@@ -129,7 +128,6 @@ const updateIslamicLecture = async (req, res) => {
       }
     }
 
-    // Update existingIslamicLecture with the new information
     Object.assign(existingIslamicLecture, updatedIslamicLectureInfo);
     await existingIslamicLecture.save();
 
@@ -143,9 +141,43 @@ const updateIslamicLecture = async (req, res) => {
   }
 };
 
+const deleteIslamicLectureById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedIslamicLecture = await IslamicLecture.findByIdAndDelete(id);
+
+    if (!deletedIslamicLecture) {
+      return res.status(404).json({ error: "Islamic Lecture not found" });
+    }
+
+    const lecturerId = deletedIslamicLecture.lecturer;
+    const foundLecturer = await Lecturer.findById(lecturerId);
+
+    if (!foundLecturer) {
+      return res.status(404).json({ error: "Lecturer not found" });
+    }
+
+    foundLecturer.lectures = foundLecturer.lectures.filter(
+      (lecture) => lecture.toString() !== id
+    );
+
+    await foundLecturer.save();
+
+    return res.json({
+      id,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   createIslamicLecture,
   getIslamicLecturesByType,
   getIslamicLectureById,
   updateIslamicLecture,
+  deleteIslamicLectureById,
 };

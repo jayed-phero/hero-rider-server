@@ -33,7 +33,7 @@ const sendVerificationCode = async (email, verificationCode) => {
 };
 
 const register = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, role } = req.body;
 
   console.log(req.body);
 
@@ -50,17 +50,22 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create a new user
-    const newUser = new User({ email, password: hashedPassword, username });
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      username,
+      role,
+    });
 
     // Generate and save a validation code with expiration time
-    const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    const expirationTime = new Date();
-    expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expiration time: 30 minutes
-    newUser.validationCodes.push({
-      code: verificationCode,
-      timestamp: Date.now(),
-      expirationTime,
-    });
+    // const verificationCode = Math.floor(100000 + Math.random() * 900000);
+    // const expirationTime = new Date();
+    // expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expiration time: 30 minutes
+    // newUser.validationCodes.push({
+    //   code: verificationCode,
+    //   timestamp: Date.now(),
+    //   expirationTime,
+    // });
 
     await newUser.save();
 
@@ -136,18 +141,18 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // Check if the user is verified
-    if (!user.isVerified) {
-      return res.status(400).json({ msg: "Email not verified" });
-    }
+    // // Check if the user is verified
+    // if (!user.isVerified) {
+    //   return res.status(400).json({ msg: "Email not verified" });
+    // }
 
     // Generate JWT token
     const payload = { user: { id: user._id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: 10800,
-    }); // 3 hours
+    });
 
-    res.json({ token });
+    res.json({ token, status: "success" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

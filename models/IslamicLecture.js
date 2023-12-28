@@ -8,7 +8,6 @@ const islamicLecture = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true,
     },
     title: {
       type: String,
@@ -17,28 +16,23 @@ const islamicLecture = new mongoose.Schema(
         validator: (value) => validator.isLength(value, { min: 1 }),
         message: "Title should be between 1 and 50 characters",
       },
-      trim: true,
     },
     videoDuration: {
       type: String,
       required: true,
-      trim: true,
     },
     lecturer: {
       type: ObjectId,
       required: true,
       ref: "Lecturers",
-      trim: true,
     },
     publishingDate: {
       type: Date,
       required: true,
-      trim: true,
     },
     type: {
       type: String,
       required: true,
-      trim: true,
     },
   },
   {
