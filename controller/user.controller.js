@@ -1,41 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const validator = require("validator");
 const User = require("../models/User");
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "eyetune.islam@gmail.com",
-    pass: `${process.env.MAILER_INFO}`,
-  },
-});
-
-const sendVerificationCode = async (email, verificationCode) => {
-  const mailOptions = {
-    from: "eyetune.islam@gmail.com",
-    to: email,
-    subject: "Account Verification Code",
-    text: `Your verification code is: ${verificationCode}`,
-  };
-
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-        reject("Failed to send verification code email");
-      } else {
-        resolve("Verification code sent successfully");
-      }
-    });
-  });
-};
 
 const register = async (req, res) => {
   const { email, password, username, role } = req.body;
-
-  console.log(req.body);
 
   try {
     // Check if the user already exists
@@ -57,66 +25,9 @@ const register = async (req, res) => {
       role,
     });
 
-    // Generate and save a validation code with expiration time
-    // const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    // const expirationTime = new Date();
-    // expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expiration time: 30 minutes
-    // newUser.validationCodes.push({
-    //   code: verificationCode,
-    //   timestamp: Date.now(),
-    //   expirationTime,
-    // });
-
     await newUser.save();
 
-    // Send verification code via email
-    // await sendVerificationCode(email, verificationCode);
-
     res.json({ email, msg: "User registered successfully", status: "success" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-const verifyEmail = async (req, res) => {
-  const { email, verificationCode } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const storedCode = user.validationCodes.find(
-      (code) =>
-        code.code === verificationCode &&
-        Date.now() < new Date(code.expirationTime).getTime()
-    );
-
-    if (!storedCode) {
-      let errorMsg = "Invalid verification code";
-
-      if (!storedCode) {
-        errorMsg = "Invalid verification code";
-      } else if (Date.now() >= new Date(storedCode.expirationTime).getTime()) {
-        errorMsg = "Verification code has expired";
-      }
-
-      return res.status(400).json({ error: errorMsg });
-    }
-
-    // Mark the user as verified
-    user.isVerified = true;
-    user.validationCodes = []; // Clear verification codes
-
-    // Remove the used and expired verification code
-    // user.validationCodes.splice(storedCodeIndex, 1);
-
-    await user.save();
-
-    res.json({ msg: "Email verification successful" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -141,12 +52,6 @@ const login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // // Check if the user is verified
-    // if (!user.isVerified) {
-    //   return res.status(400).json({ msg: "Email not verified" });
-    // }
-
-    // Generate JWT token
     const payload = { user: { id: user._id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: 10800,
@@ -276,5 +181,4 @@ module.exports = {
   updatePassword,
   forgotPassword,
   resetPassword,
-  verifyEmail,
 };
