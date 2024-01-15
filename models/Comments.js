@@ -1,19 +1,22 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-  userId: {
+  author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  text: {
+
+  content: {
     type: String,
     required: true,
   },
-  type: {
-    type: String,
-    required: true
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
+
   qlitePostId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "QlitePost",
