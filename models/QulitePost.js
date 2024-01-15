@@ -15,7 +15,7 @@ const qlitePostSchema = new mongoose.Schema({
     },
   },
   title: {
-    type: String
+    type: String,
   },
   postInfo: {
     type: String,
