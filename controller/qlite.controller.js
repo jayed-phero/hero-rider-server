@@ -114,91 +114,78 @@ const deleteQlitePostById = async (req, res) => {
 };
 
 const toggleReaction = async (req, res) => {
-  const { user, type, target } = req.body;
+  const postId = req.params.postId;
+  console.log("user data", req.user);
+  const userId = req.user._id;
+  const { reactionType } = req.body;
 
   try {
-    // Check if the QlitePost or Comment (based on targetModel) exists
-    const targetType = target.targetModel; // 'QlitePost' or 'Comment'
-    const targetObject = await mongoose
-      .model(targetType)
-      .findById(target.targetId);
+    // Find the post
+    const post = await QlitePost.findById(postId);
 
-    if (!targetObject) {
-      return res.status(404).json({ error: `${targetType} not found` });
+    if (!post) {
+      return res.status(404).json({ error: "QlitePost not found" });
     }
 
-    // Check if the user has already reacted to this target
-    const existingReaction = await Reaction.findOne({ user, target });
+    // Find the user's existing reaction for the post
+    const existingReaction = await Reaction.findOne({
+      author: userId,
+      qlitePostId: postId,
+    });
 
-    if (existingReaction) {
-      // If the user has already reacted, remove the reaction
-      await Reaction.findByIdAndRemove(existingReaction._id);
-
-      // Remove the reference from the QlitePost or Comment
-      targetObject.reactions.pull(existingReaction._id);
-      await targetObject.save();
-
-      res.json({ message: "Reaction removed", type, target });
-    } else {
-      // If the user has not reacted, create a new reaction
-      const newReaction = new Reaction({
-        user,
-        type,
-        target,
+    // If the user has an existing reaction of the same type, remove it
+    if (existingReaction && existingReaction.reactionType === reactionType) {
+      await Reaction.deleteOne({
+        _id: existingReaction._id,
       });
-
-      const savedReaction = await newReaction.save();
-
-      // Update QlitePost or Comment with the new reaction
-      targetObject.reactions.push(savedReaction._id);
-      await targetObject.save();
-
-      res.status(201).json({ message: "Reaction added", type, target });
+      post.reactions.pull(existingReaction._id);
+    } else {
+      // If the user has a different reaction, update it to the new type
+      if (existingReaction) {
+        existingReaction.reactionType = reactionType;
+        await existingReaction.save();
+      } else {
+        // If the user has no existing reaction, create a new one
+        const newReaction = new Reaction({
+          author: userId,
+          qlitePostId: postId,
+          reactionType: reactionType,
+        });
+        await newReaction.save();
+        post.reactions.push(newReaction);
+      }
     }
+
+    // Update share count (assuming you want to increment it when a reaction is added)
+    post.shareCount = post.reactions.length;
+
+    // Save the updated post
+    await post.save();
+
+    res.json({ success: true, message: "Reaction toggled successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-const toggleShare = async (req, res) => {
-  const { user, target } = req.body;
+// POST: Share a QlitePost
+const shareQlitePost = async (req, res) => {
+  const { postId } = req.params;
 
   try {
-    // Check if the QlitePost exists
-    const targetObject = await QlitePost.findById(target);
+    // Find the original post
+    const originalPost = await QlitePost.findById(postId);
 
-    if (!targetObject) {
+    if (!originalPost) {
       return res.status(404).json({ error: "QlitePost not found" });
     }
 
-    // Check if the user has already shared this post
-    const existingShare = await Share.findOne({ user, target });
+    // Update the share count of the original post
+    originalPost.shareCount += 1;
+    await originalPost.save();
 
-    if (existingShare) {
-      // If the user has already shared, remove the share
-      await Share.findByIdAndRemove(existingShare._id);
-
-      // Update QlitePost with the removed share
-      targetObject.shareCount -= 1;
-      await targetObject.save();
-
-      res.json({ message: "Share removed", target });
-    } else {
-      // If the user has not shared, create a new share
-      const newShare = new Share({
-        user,
-        target,
-      });
-
-      const savedShare = await newShare.save();
-
-      // Update QlitePost with the new share
-      targetObject.shareCount += 1;
-      await targetObject.save();
-
-      res.status(201).json({ message: "Share added", target });
-    }
+    res.status(200).json({ shareCount: originalPost.shareCount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -212,4 +199,5 @@ module.exports = {
   updateQlitePostById,
   deleteQlitePostById,
   toggleReaction,
+  shareQlitePost,
 };

@@ -27,7 +27,12 @@ const register = async (req, res) => {
 
     await newUser.save();
 
-    res.json({ email, msg: "User registered successfully", status: "success" });
+    res.json({
+      email,
+      id: newUser._id,
+      msg: "User registered successfully",
+      status: "success",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -58,16 +63,9 @@ const login = async (req, res) => {
       email: user.email,
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "5h",
+      expiresIn: "3d",
     });
-
-    // res.status(200).json({
-    //   status: "success",
-    //   message: "Matched",
-    //   token: `Bearer ${token}`,
-    //   user: payload,
-    // });
-
+    // const token = "token";
     res.status(200).json({
       status: "success",
       message: "Authentication successful",

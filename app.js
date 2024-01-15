@@ -17,11 +17,9 @@ app.get("/", (req, res) => {
 
 // Use the route files
 // app.use("/users", usersRoutes);
-app.use("/auth", authRoutes);
-app.use("/lectures", lecturesRoutes);
-app.use("/masyalas", masyalasRoutes);
+app.use("/api/v1/auth", authRoutes);
 app.use("/lecturers", lecturersRoutes);
-app.use("/qlite", qlitePost);
+app.use("/api/v1/qlite", qlitePost);
 app.use("/api/v1/lecture", islamicLecture);
 
 module.exports = app;

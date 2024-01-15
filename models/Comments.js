@@ -16,6 +16,12 @@ const commentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  qlitePostId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "QlitePost",
+    required: true,
+  },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

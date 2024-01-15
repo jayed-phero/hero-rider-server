@@ -7,7 +7,7 @@ const reactionSchema = new mongoose.Schema({
     required: true,
   },
 
-  type: {
+  reactionType: {
     type: String,
     enum: ["like", "dislike", "love", "happy", "sad", "angry"],
     required: true,
@@ -16,6 +16,12 @@ const reactionSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+
+  qlitePostId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "QlitePost",
+    required: true,
   },
 });
 

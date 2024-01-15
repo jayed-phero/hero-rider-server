@@ -1,41 +1,49 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const validator = require("validator");
-const UserRoles = require("../constants/user");
+const { roles } = require("../utils/constants");
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: "Invalid email address",
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid email address",
+      },
     },
+    password: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: [roles.user, roles.amdin],
+      required: true,
+    },
+    image: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    confirmationToken: String,
+    confirmationTokenExpirse: Date,
+
+    passwordChangedAt: Date,
+    passwordRestToken: String,
+    passwordResetExpirse: Date,
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: [UserRoles.user, UserRoles.amdin],
-    required: true,
-  },
-  image: {
-    type: String,
-  },
-  address: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  },
-});
+  { timestamps: true }
+);
 
 userSchema.plugin(uniqueValidator, {
   message: "The {PATH} is already taken, please choose another.",
