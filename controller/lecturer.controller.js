@@ -1,63 +1,38 @@
-// lecturer.controller.js
-// const Lecturer = require("../models/Lecturer");
-
-// const getLecturers = async (req, res) => {
-//   try {
-//     const lecturers = await Lecturer.find().exec();
-//     res.json(lecturers);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
-// module.exports = {
-//   getLecturers,
-// };
-
-const Lecture = require("../models/Lecture");
 const Lecturer = require("../models/Lecturer");
+const IslamicLecture = require("../models/IslamicLecture");
 
-const getLecturersWithCounts = async (req, res) => {
+const getAllLecturers = async (req, res) => {
   try {
-    const lecturers = await Lecturer.find().exec();
-    const lecturersWithCounts = [];
-
-    for (const lecturer of lecturers) {
-      const lecturerId = lecturer.lecturerId;
-
-      const lectureCount = await Lecture.countDocuments({
-        lecturerId,
-      });
-
-      lecturersWithCounts.push({
-        _id: lecturer._id,
-        lecturerId: lecturer.lecturerId,
-        name: lecturer.name,
-        image: lecturer.image,
-        lectureCount: lectureCount,
-      });
-    }
-
-    res.json(lecturersWithCounts);
+    const lecturers = await Lecturer.find().select("-lectures -__v");
+    const lecturersWithCount = await Promise.all(
+      lecturers.map(async (lecturer) => {
+        const count = await IslamicLecture.countDocuments({
+          lecturer: lecturer._id,
+          type: "lecture",
+        });
+        return { ...lecturer.toObject(), count };
+      })
+    );
+    res.status(200).json(lecturersWithCount);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-const getLecturesByLecturer = async (req, res) => {
-  const { lecturerId } = req.params;
-
+const getAllLecturersWithLecture = async (req, res) => {
   try {
-    const lectures = await Lecture.find({ lecturerId })
-      .sort({ _id: -1 })
-      .exec();
-
-    res.json(lectures);
+    const lecturers = await Lecturer.find().populate({
+      path: "lectures",
+      match: { type: "lecture" },
+      populate: { path: "lecturer", select: "name image" },
+    });
+    res.status(200).json({
+      lecturers,
+      status: "success",
+      message: "Successfully loaded data",
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -81,7 +56,7 @@ const getLecturersInfo = async (req, res) => {
 };
 
 module.exports = {
-  getLecturersWithCounts,
-  getLecturesByLecturer,
+  getAllLecturersWithLecture,
+  getAllLecturers,
   getLecturersInfo,
 };

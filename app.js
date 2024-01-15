@@ -4,11 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/user.routes");
-const lecturesRoutes = require("./routes/lectures.routes");
-const masyalasRoutes = require("./routes/masyala.routes");
 const lecturersRoutes = require("./routes/lecturers.routes");
 const qlitePost = require("./routes/qlite.routes");
-const shariyahSolution = require("./routes/sharyesolution.routes");
 const islamicLecture = require("./routes/islamiclecture.routes");
 
 app.use(express.json());
@@ -20,12 +17,9 @@ app.get("/", (req, res) => {
 
 // Use the route files
 // app.use("/users", usersRoutes);
-app.use("/auth", authRoutes);
-app.use("/lectures", lecturesRoutes);
-app.use("/masyalas", masyalasRoutes);
+app.use("/api/v1/auth", authRoutes);
 app.use("/lecturers", lecturersRoutes);
-app.use("/qlite", qlitePost);
-app.use("/sharye", shariyahSolution);
+app.use("/api/v1/qlite", qlitePost);
 app.use("/api/v1/lecture", islamicLecture);
 
 module.exports = app;

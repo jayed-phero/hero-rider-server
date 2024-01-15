@@ -1,31 +1,26 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
 
-exports.authMiddleware = (req, res, next) => {
-  // Get the token from the request headers
-  const token = req.header("x-auth-token");
+const authenticateToken = (req, res, next) => {
+  const token = req.header("Authorization");
 
   if (!token) {
-    return res.status(401).json({ msg: "No token, authorization denied" });
+    return res.status(401).json({ msg: "Unauthorized - Missing token" });
   }
 
   try {
-    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded.user;
 
-    // Add user to the request
-    // req.user = await User.findById(decoded.user.id).select("-password");
-    // req.user = await User.findById(decoded.user.id).select(
-    //   "email username _id"
-    // );
-
-    req.user = decoded;
+    // Check user role
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ msg: "Forbidden - Admin access required" });
+    }
 
     next();
   } catch (error) {
-    console.error("erroe ff", error);
-    res.status(401).json({ msg: "Token is not valid" });
+    console.error(error);
+    return res.status(401).json({ msg: "Unauthorized - Invalid token" });
   }
 };
 
-// module.exports = authMiddleware;
+module.exports = authenticateToken;

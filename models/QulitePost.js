@@ -1,57 +1,50 @@
 const mongoose = require("mongoose");
 
-const qlitePostSchema = new mongoose.Schema({
-  userID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  videoContent: {
-    videoDuration: {
-      type: String,
-    },
-    videoId: {
-      type: String,
-    },
-  },
-  title: {
-    type: String
-  },
-  postInfo: {
-    type: String,
-    required: true,
-  },
-  publishingDate: {
-    type: String,
-    required: true,
-  },
-  tags: [
-    {
-      type: String,
-    },
-  ],
-  image: {
-    type: String,
-  },
-  likes: [
-    {
+const qlitePostSchema = new mongoose.Schema(
+  {
+    author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
-  ],
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
+
+    content: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  ],
-  reactions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Reaction",
+
+    images: [
+      {
+        type: String,
+      },
+    ],
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
-  ],
-});
+
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    reactions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Reaction",
+      },
+    ],
+
+    shareCount: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
 const QlitePost = mongoose.model("QlitePost", qlitePostSchema);
 

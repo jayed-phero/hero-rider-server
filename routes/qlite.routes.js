@@ -1,26 +1,41 @@
 const express = require("express");
 const router = express.Router();
 const qlitePostController = require("../controller/qlite.controller");
-const { authMiddleware } = require("../milldeware/jwtverify");
+const { authMiddleware } = require("../milldeware/authenticate");
 
-// Like a QlitePost
-router.post("/:postId/reaction",
-  //  authMiddleware,
-  qlitePostController.toggleReaction);
+router.get("/", qlitePostController.getAllQlitePosts);
 
-// Comment on a QlitePost
+// GET: Retrieve a specific QlitePost by ID
+router.get("/getone/:id", qlitePostController.getQlitePostById);
+
+// PUT: Update a specific QlitePost by ID
+router.patch("/update/:id", qlitePostController.updateQlitePostById);
+
+// DELETE: Delete a specific QlitePost by ID
+router.delete("/delete/:id", qlitePostController.deleteQlitePostById);
+
+// // POST: Toggle share for a QlitePost
+// router.post('/:id/share/toggle', shareController.toggleShare);
+
 router.post(
-  "/:postId/comment",
-  // authMiddleware,
-  qlitePostController.commentOnQlitePost
+  "/reaction/:postId",
+  authMiddleware,
+  qlitePostController.toggleReaction
 );
 
-// Get posts for a specific user
-router.get("/:userId/posts", qlitePostController.getUserPosts);
+router.post("/create", qlitePostController.createQlitePost);
+router.post("/share/:postId", authMiddleware, shareController.shareQlitePost);
+
+// Comment on a QlitePost
+// router.post(
+//   "/:postId/comment",
+//   // authMiddleware,
+//   qlitePostController.commentOnQlitePost
+// );
+
+// // Get posts for a specific user
+// router.get("/:userId/posts", qlitePostController.getUserPosts);
 
 // Create a new QlitePost
-router.post("/create", qlitePostController.createQlitePost);
-
-// Other QlitePost routes...
 
 module.exports = router;
