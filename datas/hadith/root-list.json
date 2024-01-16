@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "title": "আল-কুরআনুল কারীম ও কুরআন সংক্রান্ত বিবিধ বিদ্যা",
+    "hadeeths_count": "23",
+    "parent_id": null
+  },
+  {
+    "id": "2",
+    "title": "হাদীস ও হাদীস সংক্রান্ত বিবিধ বিদ্যা",
+    "hadeeths_count": "4",
+    "parent_id": null
+  },
+  {
+    "id": "3",
+    "title": "আকীদা",
+    "hadeeths_count": "317",
+    "parent_id": null
+  },
+  {
+    "id": "4",
+    "title": "ফিকহ ও উসূলে ফিকহ",
+    "hadeeths_count": "815",
+    "parent_id": null
+  },
+  {
+    "id": "5",
+    "title": "ফযীলত ও শিষ্ঠাচার",
+    "hadeeths_count": "592",
+    "parent_id": null
+  },
+  {
+    "id": "6",
+    "title": "দা‘ওয়াহ্ (আল্লাহর দিকে আহ্বান) ও হিসবাহ (সৎকাজের আদেশ-অসৎকাজের নিষেধ)",
+    "hadeeths_count": "74",
+    "parent_id": null
+  },
+  {
+    "id": "7",
+    "title": "জীবনী ও ইতিহাস",
+    "hadeeths_count": "132",
+    "parent_id": null
+  }
+]
