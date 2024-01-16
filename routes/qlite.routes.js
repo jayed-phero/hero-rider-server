@@ -24,7 +24,12 @@ router.post(
 );
 
 router.post("/create", qlitePostController.createQlitePost);
-router.post("/share/:postId", authMiddleware, shareController.shareQlitePost);
+
+router.post(
+  "/share/:postId",
+  authMiddleware,
+  qlitePostController.shareQlitePost
+);
 
 // Comment on a QlitePost
 // router.post(
