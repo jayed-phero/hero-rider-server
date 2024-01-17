@@ -27,11 +27,22 @@ const register = async (req, res) => {
 
     await newUser.save();
 
-    res.json({
-      email,
-      id: newUser._id,
-      msg: "User registered successfully",
+    const payload = {
+      _id: newUser._id,
+      role: newUser.role,
+      email: newUser.email,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "3d",
+    });
+    // const token = "token";
+    res.status(200).json({
       status: "success",
+      message: "Successfully created account.",
+      data: {
+        accessToken: `Bearer ${token}`,
+        user: payload,
+      },
     });
   } catch (error) {
     console.error(error);

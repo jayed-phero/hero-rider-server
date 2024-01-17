@@ -4,8 +4,10 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/user.routes");
+
 const lecturersRoutes = require("./routes/lecturers.routes");
 const qlitePost = require("./routes/qlite.routes");
+
 const islamicLecture = require("./routes/islamiclecture.routes");
 
 app.use(express.json());
@@ -16,9 +18,9 @@ app.get("/", (req, res) => {
 });
 
 // Use the route files
-// app.use("/users", usersRoutes);
+
 app.use("/api/v1/auth", authRoutes);
-app.use("/lecturers", lecturersRoutes);
+app.use("/api/v1/lecturers", lecturersRoutes);
 app.use("/api/v1/qlite", qlitePost);
 app.use("/api/v1/lecture", islamicLecture);
 
