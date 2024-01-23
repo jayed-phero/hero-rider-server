@@ -5,6 +5,8 @@ const { authMiddleware } = require("../milldeware/authenticate");
 
 router.get("/", qlitePostController.getAllQlitePosts);
 
+router.get("/types/:type", qlitePostController.getQliteVideoPostsByType);
+
 // GET: Retrieve a specific QlitePost by ID
 router.get("/getone/:id", qlitePostController.getQlitePostById);
 

@@ -10,7 +10,9 @@ const register = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "User already exists" });
     }
 
     // Hash the password
@@ -39,14 +41,11 @@ const register = async (req, res) => {
     res.status(200).json({
       status: "success",
       message: "Successfully created account.",
-      data: {
-        accessToken: `Bearer ${token}`,
-        user: payload,
-      },
+      accessToken: `Bearer ${token}`,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -58,14 +57,18 @@ const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid credentials" });
     }
 
     // Compare hashed password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid credentials" });
     }
 
     const payload = {
@@ -79,15 +82,12 @@ const login = async (req, res) => {
     // const token = "token";
     res.status(200).json({
       status: "success",
-      message: "Authentication successful",
-      data: {
-        accessToken: `Bearer ${token}`,
-        user: payload,
-      },
+      message: "Logged in successfully",
+      accessToken: `Bearer ${token}`,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ status: "error", message: "Internal server error" });
   }
 };
 

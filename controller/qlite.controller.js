@@ -4,17 +4,50 @@ const Comment = require("../models/Comments");
 const QlitePost = require("../models/QulitePost");
 const Reaction = require("../models/Reactions");
 
-// GET: Retrieve all QlitePosts
 const getAllQlitePosts = async (req, res) => {
   try {
-    const qlitePosts = await QlitePost.find()
+    const qlitePosts = await QlitePost.find({ videoId: { $exists: false } })
       .populate({
         path: "author",
-        select: "username email username role",
+        select: "username email image",
       })
-      .populate("comments reactions");
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username email image",
+        },
+      })
+      .populate({
+        path: "reactions",
+        select: "author reactionType",
+      });
 
-    res.json(qlitePosts);
+    res.json({ status: "success", data: qlitePosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getQliteVideoPostsByType = async (req, res) => {
+  const { type } = req.params;
+
+  try {
+    let videos;
+
+    videos = await QlitePost.find({ type })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "author",
+        select: "username email image",
+      })
+      .select("author videoId content createdAt type");
+
+    return res.json({
+      data: videos,
+      status: "success",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -29,7 +62,7 @@ const getQlitePostById = async (req, res) => {
     const qlitePost = await QlitePost.findById(postId)
       .populate({
         path: "author",
-        select: "username email username role",
+        select: "username email image",
       })
       .populate("comments reactions");
 
@@ -46,17 +79,26 @@ const getQlitePostById = async (req, res) => {
 
 // POST: Create a new QlitePost
 const createQlitePost = async (req, res) => {
-  const { author, content, images } = req.body;
+  const { author, content, images, videoId, type } = req.body;
+
+  if (videoId) {
+    const existingPostWithVideoId = await QlitePost.findOne({ videoId });
+
+    if (existingPostWithVideoId) {
+      return res.status(400).json({ message: "VideoId must be unique" });
+    }
+  }
+
+  const bodyData = req.body;
 
   try {
-    const newQlitePost = new QlitePost({
-      author,
-      content,
-      images,
-    });
+    const newQlitePost = new QlitePost(bodyData);
 
     const savedPost = await newQlitePost.save();
-    res.status(201).json(savedPost);
+    res.status(201).json({
+      status: "Post Created Successfully",
+      _id: savedPost._id,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -162,10 +204,10 @@ const toggleReaction = async (req, res) => {
     // Save the updated post
     await post.save();
 
-    res.json({ success: true, message: "Reaction toggled successfully" });
+    res.json({ status: "success", message: "You have reacted this post" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal error" });
   }
 };
 
@@ -200,4 +242,5 @@ module.exports = {
   deleteQlitePostById,
   toggleReaction,
   shareQlitePost,
+  getQliteVideoPostsByType,
 };

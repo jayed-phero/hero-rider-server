@@ -7,13 +7,19 @@ const qlitePostSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
+    title: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
+    videoId: {
+      type: String,
+    },
     content: {
       type: String,
       required: true,
-      trim: true,
     },
-
     images: [
       {
         type: String,
