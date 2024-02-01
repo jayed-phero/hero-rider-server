@@ -1,5 +1,4 @@
 const { ObjectId } = require("mongoose").Types;
-const { authenticate } = require("../milldeware/jwtverify");
 const Comment = require("../models/Comments");
 const QlitePost = require("../models/QulitePost");
 const Reaction = require("../models/Reactions");

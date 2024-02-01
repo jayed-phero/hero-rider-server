@@ -1,17 +1,25 @@
 // users.routes.js
 const express = require("express");
 const router = express.Router();
-const userController = require("../controller/user.controller");
-const { authMiddleware } = require("../milldeware/jwtverify");
-const authenticateToken = require("../milldeware/jwtverify");
+const {
+  currentUser,
+  updatePassword,
+  forgotPassword,
+  login,
+  register,
+  resetPassword,
+} = require("../controller/user.controller");
+const { authMiddleware } = require("../milldeware/authenticate");
 
 // Define routes for users
-router.post("/register", userController.register);
+router.post("/register", register);
 
-router.post("/login", userController.login);
-router.post("/forgot-password", userController.forgotPassword);
-router.post("/reset-password", userController.resetPassword);
-router.put("/update-password", userController.updatePassword);
+router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+router.put("/update-password", updatePassword);
+
+router.get("/me", authMiddleware, currentUser);
 
 // router.get("/admin-protected-route", authenticateToken, (req, res) => {
 //   // This route is protected and requires admin access

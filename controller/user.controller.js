@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const register = async (req, res) => {
-  const { email, password, username, role } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Check if the user already exists
@@ -23,25 +23,14 @@ const register = async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
-      username,
-      role,
+      role: "user",
     });
 
     await newUser.save();
 
-    const payload = {
-      _id: newUser._id,
-      role: newUser.role,
-      email: newUser.email,
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "3d",
-    });
-    // const token = "token";
     res.status(200).json({
-      status: "success",
+      statusCode: 200,
       message: "Successfully created account.",
-      accessToken: `Bearer ${token}`,
     });
   } catch (error) {
     console.error(error);
@@ -59,7 +48,7 @@ const login = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ status: "error", message: "Invalid credentials" });
+        .json({ statusCode: 400, message: "Invalid credentials" });
     }
 
     // Compare hashed password
@@ -68,7 +57,7 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res
         .status(400)
-        .json({ status: "error", message: "Invalid credentials" });
+        .json({ statusCode: 400, message: "Invalid credentials" });
     }
 
     const payload = {
@@ -79,16 +68,24 @@ const login = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "3d",
     });
-    // const token = "token";
+
     res.status(200).json({
-      status: "success",
-      message: "Logged in successfully",
-      accessToken: `Bearer ${token}`,
+      statusCode: 200,
+      data: {
+        accessToken: token,
+        message: "Logged in successfully",
+      },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", message: "Internal server error" });
+    res
+      .status(500)
+      .json({ statusCode: "error", message: "Internal server error" });
   }
+};
+
+const currentUser = async (req, res) => {
+  res.json({ statusCode: 200, data: req.user });
 };
 
 const updatePassword = async (req, res) => {
@@ -208,4 +205,5 @@ module.exports = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  currentUser,
 };
