@@ -48,6 +48,8 @@ const getLecturersInfo = async (req, res) => {
       });
     }
 
+    console.log(lecturersInfo);
+
     res.json(lecturersInfo);
   } catch (error) {
     console.error(error);
