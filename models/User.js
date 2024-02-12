@@ -35,9 +35,17 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    mainCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+    registeredUserId: {
+      type: String,
+    },
     confirmationToken: String,
     confirmationTokenExpirse: Date,
-
     passwordChangedAt: Date,
     passwordRestToken: String,
     passwordResetExpirse: Date,

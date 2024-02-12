@@ -14,6 +14,7 @@ const createRecentSubject = async (req, res) => {
     handleErrors(res, error);
   }
 };
+
 const getAllRecentSubjects = async (req, res) => {
   try {
     const [data, notification] = await Promise.all([
