@@ -4,7 +4,7 @@ const Course = require("../models/Course");
 const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find();
-    res.json(courses);
+    res.json({ statusCode: 200, data: courses });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -17,7 +17,7 @@ const getCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ error: "Course not found" });
     }
-    res.json(course);
+    res.json({ statusCode: 200, data: course });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -28,7 +28,10 @@ const createCourse = async (req, res) => {
   try {
     const course = new Course(req.body);
     const savedCourse = await course.save();
-    res.status(201).json(savedCourse);
+    res.status(201).json({
+      statusCode: 200,
+      id: savedCourse._id,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -37,15 +40,26 @@ const createCourse = async (req, res) => {
 // Update a course by ID
 const updateCourseById = async (req, res) => {
   try {
+    // const { id } = req.params;
+    // const courseInfo = req.body;
+    // const existingCourse = await Course.findById(id);
+
+    // if (!existingCourse) {
+    //   return res.status(404).json({ error: "Course not found" });
+    // }
+
+    // Object.assign(existingCourse, courseInfo);
+    // await existingCourse.save();
     const updatedCourse = await Course.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
+
     if (!updatedCourse) {
       return res.status(404).json({ error: "Course not found" });
     }
-    res.json(updatedCourse);
+    res.json({ statusCode: 200, data: updatedCourse });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

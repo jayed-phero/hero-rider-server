@@ -25,11 +25,12 @@ const courseSchema = new mongoose.Schema(
     duration: {
       type: String,
       required: true,
-      min: 0,
     },
     banner: {
       type: String,
+      required: true,
     },
+    videoId: { type: String },
     discount: {
       type: String,
     },
@@ -40,19 +41,15 @@ const courseSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      default: 0,
-      min: 0,
-      max: 5,
     },
     studentsEnrolled: {
       type: Number,
-      default: 0,
     },
-    features: [{ type: String }],
+    feature: [{ type: String }],
     category: {
       type: String,
       required: true,
-      enum: ["Quran", "Science", "History"],
+      enum: ["Quran", "Science", "History", "Hadith", "History", "Programming"],
     },
   },
   {
