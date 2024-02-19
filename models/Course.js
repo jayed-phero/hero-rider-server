@@ -45,6 +45,7 @@ const courseSchema = new mongoose.Schema(
     studentsEnrolled: {
       type: Number,
     },
+    type: { type: String },
     feature: [{ type: String }],
     category: {
       type: String,

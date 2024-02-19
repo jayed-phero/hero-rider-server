@@ -1,4 +1,6 @@
 const Course = require("../models/Course");
+const CourseEnrolled = require("../models/CourseEnrolled");
+const User = require("../models/User");
 
 // Get all courses
 const getAllCourses = async (req, res) => {
@@ -65,6 +67,95 @@ const updateCourseById = async (req, res) => {
   }
 };
 
+const TestenrolledCourseByUserId = async (req, res) => {
+  const enrollInfo = req.body;
+  const userID = req.user._id;
+  try {
+    const course = await Course.findById(enrollInfo.courseId);
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userID);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Check if the user is already enrolled in the course
+    if (user.enrolledCourses.includes(enrollInfo.courseId)) {
+      return res.status(400).send("User is already enrolled in this course");
+    }
+
+    const enrollment = await CourseEnrolled.findOne({ userId: userID });
+    if (enrollment) {
+      console.log("User is enrolled in this course");
+
+      if (enrollment.isUserEnrolled(enrollInfo.courseId)) {
+        return res.status(400).send("User is already enrolled in this course");
+      } else {
+      }
+    } else {
+      console.log("User is not enrolled in this course");
+      user.enrolledCourses.push(enrollInfo.courseId);
+      user.phone = enrollInfo.phone;
+
+      const course = new Course(req.body);
+      const savedCourse = await course.save();
+      await user.save();
+
+      res.status(200).send("Enrollment successful");
+    }
+
+    await user.save();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+const enrolledCourseByUserId = async (req, res) => {
+  const enrollInfo = req.body;
+  const userID = req.user._id;
+  try {
+    const course = await Course.findById(enrollInfo.courseId);
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userID);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Check if the user is already enrolled in the course
+    if (user.enrolledCourses.includes(enrollInfo.courseId)) {
+      return res.status(400).send("User is already enrolled in this course");
+    }
+
+    user.enrolledCourses.push(enrollInfo.courseId);
+    user.phone = enrollInfo.phone;
+
+    try {
+      const enrollData = new CourseEnrolled(req.body);
+      const savedCourse = await enrollData.save();
+      await user.save();
+
+      res.status(200).send({
+        statusCode: 200,
+        message: "Enrollment successful",
+        data: savedCourse,
+      });
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
 // Delete a course by ID
 const deleteCourseById = async (req, res) => {
   try {
@@ -84,4 +175,5 @@ module.exports = {
   createCourse,
   updateCourseById,
   deleteCourseById,
+  enrolledCourseByUserId,
 };

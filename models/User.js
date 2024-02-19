@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    mainCourses: [
+    enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
