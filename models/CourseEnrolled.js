@@ -11,7 +11,6 @@ const courseEnrolledSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
     },
-
     status: {
       type: String,
       enum: ["active", "completed", "pending", "canceled"],
@@ -22,9 +21,21 @@ const courseEnrolledSchema = new mongoose.Schema(
       status: String,
       amount: Number,
     },
+    paymentMethods: {
+      type: String,
+      enum: ["nagad", "rocket"],
+    },
+    paymentMobileNumber: {
+      type: String,
+    },
     duration: {
       startDate: Date,
       endDate: Date,
+    },
+    type: {
+      type: String,
+      enum: ["free", "paid"],
+      default: "free",
     },
     metadata: {
       enrollmentSource: String,

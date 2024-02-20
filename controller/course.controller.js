@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Course = require("../models/Course");
 const CourseEnrolled = require("../models/CourseEnrolled");
 const User = require("../models/User");
@@ -114,43 +115,95 @@ const TestenrolledCourseByUserId = async (req, res) => {
   }
 };
 
+// const enrolledCourseByUserId = async (req, res) => {
+//   const enrollInfo = req.body;
+//   const userID = req.user._id;
+//   try {
+//     const course = await Course.findById(enrollInfo.courseId);
+//     if (!course) {
+//       return res.status(404).send("Course not found");
+//     }
+
+//     // Find the user by ID
+//     const user = await User.findById(userID);
+//     if (!user) {
+//       return res.status(404).send("User not found");
+//     }
+
+//     // Check if the user is already enrolled in the course
+//     if (user.enrolledCourses.includes(enrollInfo.courseId)) {
+//       return res.status(400).send("User is already enrolled in this course");
+//     }
+
+//     user.enrolledCourses.push(enrollInfo.courseId);
+//     user.phone = enrollInfo.phone;
+
+//     try {
+//       const enrollData = new CourseEnrolled(req.body);
+//       const savedCourse = await enrollData.save();
+//       await user.save();
+
+//       res.status(200).send({
+//         statusCode: 200,
+//         message: "Enrollment successful",
+//         data: savedCourse,
+//       });
+//     } catch (error) {
+//       res.status(500).send("Internal server error");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Internal server error");
+//   }
+// };
+
 const enrolledCourseByUserId = async (req, res) => {
   const enrollInfo = req.body;
   const userID = req.user._id;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const course = await Course.findById(enrollInfo.courseId);
+    const course = await Course.findById(enrollInfo.courseId).session(session);
     if (!course) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).send("Course not found");
     }
 
-    // Find the user by ID
-    const user = await User.findById(userID);
+    const user = await User.findById(userID).session(session);
     if (!user) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).send("User not found");
     }
 
-    // Check if the user is already enrolled in the course
     if (user.enrolledCourses.includes(enrollInfo.courseId)) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).send("User is already enrolled in this course");
     }
 
     user.enrolledCourses.push(enrollInfo.courseId);
     user.phone = enrollInfo.phone;
 
-    try {
-      const enrollData = new CourseEnrolled(req.body);
-      const savedCourse = await enrollData.save();
-      await user.save();
+    const enrollData = new CourseEnrolled(req.body);
 
-      res.status(200).send({
-        statusCode: 200,
-        message: "Enrollment successful",
-        data: savedCourse,
-      });
-    } catch (error) {
-      res.status(500).send("Internal server error");
-    }
+    await enrollData.save({ session });
+    await user.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).send({
+      statusCode: 200,
+      message: "Enrollment successful",
+      data: enrollData,
+    });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error(error);
     res.status(500).send("Internal server error");
   }

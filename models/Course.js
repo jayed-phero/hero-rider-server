@@ -45,7 +45,11 @@ const courseSchema = new mongoose.Schema(
     studentsEnrolled: {
       type: Number,
     },
-    type: { type: String },
+    type: {
+      type: String,
+      enum: ["free", "paid"],
+      default: "free",
+    },
     feature: [{ type: String }],
     category: {
       type: String,
