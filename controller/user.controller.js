@@ -84,8 +84,28 @@ const login = async (req, res) => {
   }
 };
 
+// const currentUser = async (req, res) => {
+//   res.json({ statusCode: 200, data: req.user });
+// };
+
 const currentUser = async (req, res) => {
-  res.json({ statusCode: 200, data: req.user });
+  try {
+    const user = await User.findById(req.user._id)
+      .select("-password")
+      .populate("enrolledCourses")
+      .exec();
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ statusCode: 404, message: "User not found" });
+    }
+
+    res.status(200).json({ statusCode: 200, data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
+  }
 };
 
 const updatePassword = async (req, res) => {

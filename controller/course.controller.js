@@ -158,8 +158,9 @@ const TestenrolledCourseByUserId = async (req, res) => {
 // };
 
 const enrolledCourseByUserId = async (req, res) => {
-  const enrollInfo = req.body;
-  const userID = req.user._id;
+  const chekcoutData = req.body;
+  const id = req.user._id;
+  const enrollInfo = { ...chekcoutData, userId: id };
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -169,26 +170,39 @@ const enrolledCourseByUserId = async (req, res) => {
     if (!course) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(404).send("Course not found");
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "Course not found" });
     }
 
-    const user = await User.findById(userID).session(session);
+    const user = await User.findById(id).session(session);
     if (!user) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(404).send("User not found");
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "User not found" });
     }
 
     if (user.enrolledCourses.includes(enrollInfo.courseId)) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).send("User is already enrolled in this course");
+      return res.status(400).send({
+        statusCode: 400,
+        message: "User is already enrolled in this course",
+      });
     }
+
+    // const userEnrollmentsCount = await CourseEnrolled.countDocuments({
+    //   userId,
+    // }).session(session);
+
+    // const serialUserId = userEnrollmentsCount + 1;
 
     user.enrolledCourses.push(enrollInfo.courseId);
     user.phone = enrollInfo.phone;
 
-    const enrollData = new CourseEnrolled(req.body);
+    const enrollData = new CourseEnrolled(enrollInfo);
 
     await enrollData.save({ session });
     await user.save({ session });
@@ -198,14 +212,14 @@ const enrolledCourseByUserId = async (req, res) => {
 
     res.status(200).send({
       statusCode: 200,
-      message: "Enrollment successful",
-      data: enrollData,
+      message: "Enrollment successfully done",
+      // data: enrollData,
     });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).send({ statusCode: 500, message: "Internal server error" });
   }
 };
 

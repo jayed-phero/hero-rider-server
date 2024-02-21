@@ -14,11 +14,15 @@ const userSchema = new mongoose.Schema(
         message: "Invalid email address",
       },
     },
+    userId: {
+      type: String,
+      unique: true,
+    },
     password: {
       type: String,
       required: true,
     },
-    username: {
+    fullName: {
       type: String,
     },
     role: {
@@ -26,7 +30,7 @@ const userSchema = new mongoose.Schema(
       enum: [roles.user, roles.amdin],
       required: true,
     },
-    image: {
+    photo: {
       type: String,
     },
     address: {
