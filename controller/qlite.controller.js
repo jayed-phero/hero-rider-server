@@ -84,7 +84,9 @@ const createQlitePost = async (req, res) => {
     const existingPostWithVideoId = await QlitePost.findOne({ videoId });
 
     if (existingPostWithVideoId) {
-      return res.status(400).json({ message: "VideoId must be unique" });
+      return res
+        .status(400)
+        .json({ statusCode: 400, message: "VideoId must be unique" });
     }
   }
 
@@ -95,8 +97,9 @@ const createQlitePost = async (req, res) => {
 
     const savedPost = await newQlitePost.save();
     res.status(201).json({
-      status: "Post Created Successfully",
+      statusCode: 200,
       _id: savedPost._id,
+      message: "Successfully created post",
     });
   } catch (error) {
     console.error(error);
@@ -114,21 +117,22 @@ const updateQlitePostById = async (req, res) => {
       postId,
       { $set: updateFields },
       { new: true }
-    )
-      .populate({
-        path: "author",
-        select: "username email username role",
-      })
-      .populate("comments reactions");
+    );
 
     if (!updatedQlitePost) {
-      return res.status(404).json({ error: "QlitePost not found" });
+      return res
+        .status(404)
+        .json({ statusCode: 404, message: "QlitePost not found" });
     }
 
-    res.json(updatedQlitePost);
+    res.json({
+      statusCode: 200,
+      data: updatedQlitePost,
+      message: "Qlite post updated",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
   }
 };
 

@@ -12,7 +12,8 @@ const createIslamicLecture = async (req, res) => {
 
     if (existingIslamicLecture) {
       return res.status(400).json({
-        error: "Islamic Lecture with the same title already exists",
+        message: "Video Id already exists",
+        statusCode: 400,
       });
     }
 
@@ -26,7 +27,9 @@ const createIslamicLecture = async (req, res) => {
     const foundLecturer = await Lecturer.findById(lecturerId);
 
     if (!foundLecturer) {
-      return res.status(404).json({ error: "Lecturer not found" });
+      return res
+        .status(404)
+        .json({ message: "Lecturer not found", statusCode: 404 });
     }
 
     foundLecturer.lectures.push(createdLectureId);
@@ -35,7 +38,8 @@ const createIslamicLecture = async (req, res) => {
 
     return res.json({
       id: createdLectureId,
-      status: "success",
+      statusCode: 200,
+      message: `Successfully created the  ${islamicLectureInfo.type}`,
     });
   } catch (error) {
     console.error(error);
@@ -110,7 +114,9 @@ const updateIslamicLecture = async (req, res) => {
     const existingIslamicLecture = await IslamicLecture.findById(id);
 
     if (!existingIslamicLecture) {
-      return res.status(404).json({ error: "Islamic Lecture not found" });
+      return res
+        .status(404)
+        .json({ message: "Islamic Lecture not found", statusCode: 404 });
     }
 
     if (
@@ -123,21 +129,29 @@ const updateIslamicLecture = async (req, res) => {
 
       if (duplicateVideoId) {
         return res.status(400).json({
-          error: "Islamic Lecture with the same videoId already exists",
+          message: "VideoId already exists",
+          statusCode: 400,
         });
       }
     }
 
-    Object.assign(existingIslamicLecture, updatedIslamicLectureInfo);
-    await existingIslamicLecture.save();
+    // Object.assign(existingIslamicLecture, updatedIslamicLectureInfo);
+    // await existingIslamicLecture.save();
+
+    const updatedCourse = await IslamicLecture.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
     return res.json({
-      id: existingIslamicLecture._id,
-      status: "success",
+      data: updatedCourse._id,
+      statusCode: 200,
+      message: "Islamic Lecture Updated Successfully",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal server error", statusCode: 500 });
   }
 };
 

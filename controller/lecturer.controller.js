@@ -48,12 +48,10 @@ const getLecturersInfo = async (req, res) => {
       });
     }
 
-    console.log(lecturersInfo);
-
-    res.json(lecturersInfo);
+    res.json({ statusCode: 200, data: lecturersInfo });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ statusCode: 500, error: "Internal server error" });
   }
 };
 
