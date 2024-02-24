@@ -69,7 +69,10 @@ const getQlitePostById = async (req, res) => {
       return res.status(404).json({ error: "QlitePost not found" });
     }
 
-    res.json(qlitePost);
+    res.json({
+      statusCode: 200,
+      data: qlitePost,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

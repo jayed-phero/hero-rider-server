@@ -16,10 +16,8 @@ const qlitePostSchema = new mongoose.Schema(
     videoId: {
       type: String,
     },
-    content: {
-      type: String,
-      required: true,
-    },
+    postInfo: [{ type: String }],
+    banner: String,
     images: [
       {
         type: String,
