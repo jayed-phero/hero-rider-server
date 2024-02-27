@@ -4,17 +4,17 @@ const shahadaSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
   image: String,
   detailInfo: [
     {
-      banner: {
-        type: String,
-        required: true,
-      },
+      _id: mongoose.Schema.Types.ObjectId,
+      banner: String,
       title: {
         type: String,
         required: true,
+        qnique: true,
       },
       parts: [
         {
@@ -34,6 +34,11 @@ const shahadaSchema = new mongoose.Schema({
       ],
     },
   ],
+  category: {
+    type: String,
+    enum: ["shahada"],
+    required: true,
+  },
 });
 
 const Shahada = mongoose.model("Shahada", shahadaSchema);

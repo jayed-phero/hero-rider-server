@@ -10,6 +10,7 @@ const qlitePost = require("./routes/qlite.routes");
 const islamicLecture = require("./routes/islamiclecture.routes");
 const recentSubject = require("./routes/recentsubject.routes");
 const courses = require("./routes/course.routes");
+const shahada = require("./routes/foundation/shahadah.routes");
 
 app.use(express.json());
 app.use(cors());
@@ -26,5 +27,7 @@ app.use("/api/v1/qlite", qlitePost);
 app.use("/api/v1/lecture", islamicLecture);
 app.use("/api/v1/recent", recentSubject);
 app.use("/api/v1/course", courses);
+// foundation
+app.use("/api/v1/foundation/shahada", shahada);
 
 module.exports = app;
