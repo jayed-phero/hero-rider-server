@@ -14,4 +14,9 @@ router.get("/delete/:id", islamicLectureController.deleteIslamicLectureById);
 
 router.get("/types/:type", islamicLectureController.getIslamicLecturesByType);
 
+router.get(
+  "/getlecture/:lecturerId",
+  islamicLectureController.getIslamicLecturesByTypeAndLecturerId
+);
+
 module.exports = router;

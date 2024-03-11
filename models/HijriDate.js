@@ -18,8 +18,8 @@ const hijriDateSchema = new mongoose.Schema(
       required: true,
     },
     howManyDays: {
-      type: String,
-      enum: ["1", "2", "3"],
+      type: Number,
+      enum: [1, 2, 3],
       required: true,
     },
     isUpdate: {
