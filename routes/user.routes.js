@@ -8,6 +8,7 @@ const {
   login,
   register,
   resetPassword,
+  updateUser,
 } = require("../controller/user.controller");
 const { authMiddleware } = require("../milldeware/authenticate");
 
@@ -18,6 +19,7 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.put("/update-password", updatePassword);
+router.patch("/update/me", authMiddleware, updateUser);
 
 router.get("/me", authMiddleware, currentUser);
 
