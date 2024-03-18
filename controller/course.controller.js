@@ -40,6 +40,23 @@ const createCourse = async (req, res) => {
   }
 };
 
+const getCoursesSelectionData = async (req, res) => {
+  try {
+    // Fetch all courses
+    const courses = await Course.find();
+
+    // Transform the courses array to contain _id as value and title as label
+    const transformedCourses = courses.map((course) => ({
+      value: course._id,
+      label: course.title,
+    }));
+
+    res.json({ statusCode: 200, data: transformedCourses });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // Update a course by ID
 const updateCourseById = async (req, res) => {
   try {
@@ -155,4 +172,5 @@ module.exports = {
   updateCourseById,
   deleteCourseById,
   enrolledCourseByUserId,
+  getCoursesSelectionData,
 };

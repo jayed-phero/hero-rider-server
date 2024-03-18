@@ -19,6 +19,9 @@ router.get("/", courseRoutes.getAllCourses);
 // GET a single course by ID
 router.get("/getone/:id", courseRoutes.getCourseById);
 
+// GET course selection data
+router.get("/getcoursedata", courseRoutes.getCoursesSelectionData);
+
 // POST create a new course
 router.post("/create", courseRoutes.createCourse);
 

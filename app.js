@@ -13,6 +13,7 @@ const courses = require("./routes/course.routes");
 const shahada = require("./routes/foundation/shahadah.routes");
 const qliteStory = require("./routes/qlitestory.routes");
 const hijridate = require("./routes/hijridate.routes");
+const courseClasses = require("./routes/courseclasses.routes");
 
 app.use(express.json());
 app.use(cors());
@@ -31,6 +32,7 @@ app.use("/api/v1/recent", recentSubject);
 app.use("/api/v1/course", courses);
 app.use("/api/v1/qlitestory", qliteStory);
 app.use("/api/v1/hijridate", hijridate);
+app.use("/api/v1/classes", courseClasses);
 
 // foundation
 app.use("/api/v1/foundation/shahada", shahada);
