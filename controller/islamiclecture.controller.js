@@ -86,6 +86,38 @@ const getIslamicLecturesByType = async (req, res) => {
   }
 };
 
+const getIslamicLecturesByTypeAndLecturerId = async (req, res) => {
+  const { lecturerId } = req.params;
+
+  try {
+    let lectures;
+
+    // if (!type && !lecturerId) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Type and lecturerId are required", statusCode: 400 });
+    // }
+
+    lectures = await IslamicLecture.find({
+      type: "lecture",
+      lecturer: lecturerId,
+    })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "lecturer",
+        select: "_id name lecturerId image",
+      });
+
+    return res.json({
+      data: lectures,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const getIslamicLectureById = async (req, res) => {
   const { id } = req.params;
 
@@ -193,5 +225,6 @@ module.exports = {
   getIslamicLecturesByType,
   getIslamicLectureById,
   updateIslamicLecture,
+  getIslamicLecturesByTypeAndLecturerId,
   deleteIslamicLectureById,
 };

@@ -7,12 +7,12 @@ router.get("/", hijriDateController.getAllHijriDates);
 // GET: Retrieve a specific HijriDate by ID
 router.get("/:id", hijriDateController.getHijriDateById);
 
+router.get(
+  "/month/:hijriMonthNumber",
+  hijriDateController.getHijriDatesByMonth
+);
+
 // POST: Create a new HijriDate
 router.post("/create", hijriDateController.createHijriDate);
-
-router.get(
-  "/:isUpdate/:hijriMonthNumber",
-  hijriDateController.getHijriDatesByUpdateAndMonth
-);
 
 module.exports = router;

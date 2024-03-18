@@ -22,18 +22,20 @@ const createHijriDate = async (req, res) => {
   }
 };
 
-const getHijriDatesByUpdateAndMonth = async (req, res) => {
+const getHijriDatesByMonth = async (req, res) => {
   try {
-    const { isUpdate, hijriMonthNumber } = req.params;
-    // Convert isUpdate from string to boolean
-    const isUpdateBool = isUpdate === "true";
-    // Query based on isUpdate and hijriMonthNumber
-    const hijriDates = await HijriDate.find({
-      isUpdate: isUpdateBool,
+    const { hijriMonthNumber } = req.params;
+    const hijriDate = await HijriDate.findOne({
       hijriMonthNumber,
     });
 
-    res.status(200).json({ data: hijriDates, statusCode: 200 });
+    if (!hijriDate) {
+      res
+        .status(404)
+        .json({ message: "No matching data found", statusCode: 404 });
+    } else {
+      res.status(200).json({ data: hijriDate, statusCode: 200 });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message, statusCode: 500 });
   }
@@ -102,5 +104,5 @@ module.exports = {
   getHijriDateById,
   updateHijriDate,
   deleteHijriDate,
-  getHijriDatesByUpdateAndMonth,
+  getHijriDatesByMonth,
 };
