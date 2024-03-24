@@ -3,9 +3,7 @@ const UserComment = require("../models/UserComment");
 // Controller function to create a new user comment
 const createComment = async (req, res) => {
   try {
-    const { email, content } = req.body;
-
-    const comment = await UserComment.create({ email, content });
+    const comment = await UserComment.create(req.body);
 
     return res.status(201).json({ statusCode: 200, data: comment });
   } catch (error) {

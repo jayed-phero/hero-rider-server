@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const userCommentSchema = new mongoose.Schema(
   {
-    email: {
-      type: String,
-      required: true,
-    },
     content: {
       type: String,
       required: true,
